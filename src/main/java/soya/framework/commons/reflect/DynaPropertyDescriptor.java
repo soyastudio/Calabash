@@ -7,7 +7,7 @@ public class DynaPropertyDescriptor extends AnnotatableDescriptor {
     private final String name;
     private final TypeDescriptor type;
 
-    private DynaPropertyDescriptor(String name, TypeDescriptor type, Map<String, Object> annotations) {
+    protected DynaPropertyDescriptor(String name, TypeDescriptor type, Map<String, Object> annotations) {
         this.name = name;
         this.type = type;
         setAnnotations(annotations);
@@ -25,6 +25,10 @@ public class DynaPropertyDescriptor extends AnnotatableDescriptor {
         return new DynaPropertyDescriptorBuilder(name, type);
     }
 
+    public static DynaPropertyDescriptorBuilder builder(String name, DynaPropertyTemplate template) {
+        return new DynaPropertyDescriptorBuilder(name, template);
+    }
+
     public static class DynaPropertyDescriptorBuilder extends AnnotatableDescriptorBuilder<DynaPropertyDescriptorBuilder> {
         private String name;
         private TypeDescriptor type;
@@ -32,6 +36,12 @@ public class DynaPropertyDescriptor extends AnnotatableDescriptor {
         private DynaPropertyDescriptorBuilder(String name, Type type) {
             this.name = name;
             this.type = TypeDescriptor.fromType(type);
+        }
+
+        private DynaPropertyDescriptorBuilder(String name, DynaPropertyTemplate template) {
+            this.name = name;
+            this.type = template.getType();
+            this.annotations.putAll(template.getAnnotations());
         }
 
         public DynaPropertyDescriptor build() {

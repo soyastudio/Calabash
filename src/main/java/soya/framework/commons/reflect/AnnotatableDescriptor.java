@@ -7,6 +7,10 @@ import java.util.Map;
 public abstract class AnnotatableDescriptor {
     private ImmutableMap<String, Object> annotations;
 
+    protected ImmutableMap<String, Object> getAnnotations() {
+        return annotations;
+    }
+
     protected void setAnnotations(Map<String, Object> annotations) {
         if(annotations != null && !annotations.isEmpty()) {
             this.annotations = ImmutableMap.copyOf(annotations);
