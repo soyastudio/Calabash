@@ -4,11 +4,14 @@ target
 .idea
 .idea_modules
 .settings
-.project
-.classpath
 .cache
 atlassian-ide-plugin.xml
 *.iml
 .java-version
+.zip
+.tgz
+.gz
 sonar-project.properties
 test-output/
+
+
