@@ -1,4 +1,4 @@
-package soya.framework.commons.bean;
+package soya.framework.bean;
 
 import java.beans.IntrospectionException;
 import java.beans.Introspector;

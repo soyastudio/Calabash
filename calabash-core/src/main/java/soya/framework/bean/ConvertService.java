@@ -1,4 +1,4 @@
-package soya.framework.commons.bean;
+package soya.framework.bean;
 
 public abstract class ConvertService {
     private static ConvertService INSTANCE;

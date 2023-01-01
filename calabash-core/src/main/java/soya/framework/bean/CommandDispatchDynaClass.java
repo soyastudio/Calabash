@@ -1,4 +1,4 @@
-package soya.framework.commons.bean;
+package soya.framework.bean;
 
 import java.lang.reflect.Method;
 import java.util.concurrent.Callable;
@@ -7,6 +7,10 @@ public class CommandDispatchDynaClass extends DynaClassBase {
 
     private Class<?> commandType;
     private Method method;
+
+    /*protected CommandDispatchDynaClass() {
+        super();
+    }*/
 
     public CommandDispatchDynaClass(String name, Class<?> commandType, String[] propNames, String methodName) {
         super();

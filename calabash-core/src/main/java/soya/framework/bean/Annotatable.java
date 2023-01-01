@@ -1,4 +1,4 @@
-package soya.framework.commons.bean;
+package soya.framework.bean;
 
 public interface Annotatable {
     void annotate(String ns, Object annotation);

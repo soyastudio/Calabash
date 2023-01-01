@@ -1,4 +1,4 @@
-package soya.framework.commons.bean;
+package soya.framework.bean;
 
 import java.util.HashMap;
 import java.util.LinkedHashMap;
