@@ -8,9 +8,9 @@ public class CommandDispatchDynaClass extends DynaClassBase {
     private Class<?> commandType;
     private Method method;
 
-    /*protected CommandDispatchDynaClass() {
+    protected CommandDispatchDynaClass() {
         super();
-    }*/
+    }
 
     public CommandDispatchDynaClass(String name, Class<?> commandType, String[] propNames, String methodName) {
         super();
@@ -22,7 +22,6 @@ public class CommandDispatchDynaClass extends DynaClassBase {
         }
 
         DynaProperty[] dynaProperties = new DynaProperty[propNames.length];
-
 
         setName(name);
         setProperties(dynaProperties);

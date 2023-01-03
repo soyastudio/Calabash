@@ -90,6 +90,7 @@ public class BasicDynaClass extends DynaClassBase {
         public Builder copyFromDeclaredFields(Class<?> cls) {
             for (Field field : cls.getDeclaredFields()) {
                 if (!Modifier.isStatic(field.getModifiers()) && !Modifier.isTransient(field.getModifiers())) {
+
                     properties.add(new DynaProperty(field.getName(), field.getType()));
                 }
             }

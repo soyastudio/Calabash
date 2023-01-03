@@ -170,15 +170,4 @@ public class XlsxDynaClass extends DynaClassBase {
         }
     }
 
-    public static void main(String[] args) {
-
-        File xlsx = new File("C:\\Albertsons\\workspace\\doc\\xpath-mappings.xlsx");
-        new XlsxDynaClass("GroceryOrder", xlsx, "Map_OMS to Canonical_CMM",
-                new String[]{
-                    "Target", "DataType", "Cardinality", "Mapping", "Source", "Version"
-                }).getRows().forEach(e -> {
-                    System.out.println(e.get("Target") + "=" + e.get(""));
-        });
-    }
-
 }

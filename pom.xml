@@ -17,6 +17,7 @@
     <modules>
         <module>calabash-core</module>
         <module>calabash-lab</module>
+        <module>calabash-albertsons</module>
     </modules>
 
 </project>

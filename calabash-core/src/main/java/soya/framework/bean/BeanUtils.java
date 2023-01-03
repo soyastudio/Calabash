@@ -21,4 +21,8 @@ public class BeanUtils {
 
         return map;
     }
+
+    public static <T> T toObject(DynaBean<?> bean, Class<T> type) {
+        return null;
+    }
 }
