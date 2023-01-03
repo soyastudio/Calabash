@@ -4,6 +4,7 @@ import java.util.Iterator;
 import java.util.stream.Stream;
 
 public interface Tree<T> {
+
     TreeNode<T> root();
 
     TreeNode<T> add(String path, T data);

@@ -23,6 +23,6 @@ public class BeanUtils {
     }
 
     public static <T> T toObject(DynaBean<?> bean, Class<T> type) {
-        return null;
+        return JsonUtils.fromJson(JsonUtils.toJson(bean), type);
     }
 }

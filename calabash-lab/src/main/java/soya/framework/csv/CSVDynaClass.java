@@ -87,6 +87,10 @@ public class CSVDynaClass extends DynaClassBase {
         }
     }
 
+    public List<DynaBean> getRows() {
+        return rows;
+    }
+
     @Override
     public DynaBean newInstance() {
         return new CSVDynaBean(this);

@@ -1,5 +1,6 @@
 package soya.framework;
 
+import soya.framework.bean.JsonUtils;
 import soya.framework.csv.CSVDynaClass;
 import soya.framework.poi.XlsxDynaClass;
 
@@ -22,9 +23,11 @@ public class Main {
             System.out.println(e.get("Target") + "=" + e.get("Mapping"));
         });*/
 
-        System.out.println(new CSVDynaClass("CSV", new FileReader(csv)).toCSV());
+        CSVDynaClass dynaClass = new CSVDynaClass("CSV", new FileReader(csv));
 
-        URI uri = URI.create("base64:encode:file:///C:/xxx.txt");
+        System.out.println(JsonUtils.toJson(dynaClass.getRows()));
+
+        //URI uri = URI.create("base64:encode:file:///C:/xxx.txt");
 
     }
 }

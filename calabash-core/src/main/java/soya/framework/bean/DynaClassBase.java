@@ -41,7 +41,7 @@ public abstract class DynaClassBase extends AnnotatableFeature implements DynaCl
     }
 
     protected static class DynaBeanBase<T extends DynaClassBase> implements DynaBean<T> {
-        private final T dynaClass;
+        private final transient T dynaClass;
         private final HashMap<String, Object> values = new HashMap<>();
 
         protected DynaBeanBase(T dynaClass) {
