@@ -15,6 +15,7 @@
     </properties>
 
     <modules>
+        <module>calabash-commons</module>
         <module>calabash-core</module>
         <module>calabash-lab</module>
         <module>calabash-albertsons</module>

@@ -2,8 +2,11 @@ package com.albertsons.application.configuration;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
+import soya.framework.bean.ClassPathTree;
+import soya.framework.reflect.ClassPath;
 
 import java.io.File;
 
@@ -27,5 +30,10 @@ public class ServiceLocator {
 
     public File getWorkspace() {
         return workspace;
+    }
+
+    @Bean
+    public ClassPathTree classPathTree() {
+        return new ClassPathTree();
     }
 }

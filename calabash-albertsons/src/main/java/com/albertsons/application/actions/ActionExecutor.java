@@ -3,7 +3,7 @@ package com.albertsons.application.actions;
 import soya.framework.bean.BasicDynaClass;
 import soya.framework.bean.DynaBean;
 import soya.framework.bean.DynaProperty;
-import soya.framework.bean.ReflectUtils;
+import soya.framework.reflect.ReflectUtils;
 
 import java.lang.reflect.Field;
 
