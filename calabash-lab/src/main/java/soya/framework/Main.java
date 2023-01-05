@@ -23,11 +23,13 @@ public class Main {
             System.out.println(e.get("Target") + "=" + e.get("Mapping"));
         });*/
 
-        CSVDynaClass dynaClass = new CSVDynaClass("CSV", new FileReader(csv));
+        //CSVDynaClass dynaClass = new CSVDynaClass("CSV", new FileReader(csv));
 
-        System.out.println(JsonUtils.toJson(dynaClass.getRows()));
+        //System.out.println(JsonUtils.toJson(dynaClass.getRows()));
 
-        //URI uri = URI.create("base64:encode:file:///C:/xxx.txt");
+        URI uri = URI.create("base64:file:///C:/xxx.txt#abc(classpath://x.json).dispatch(com.some.MyProcessor)");
+
+        System.out.println(uri.getFragment());
 
     }
 }
