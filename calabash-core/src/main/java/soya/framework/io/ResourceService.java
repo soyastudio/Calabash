@@ -1,21 +1,25 @@
 package soya.framework.io;
 
-import java.io.BufferedReader;
+import soya.framework.bean.ConvertService;
+import soya.framework.lang.Named;
+import soya.framework.reflect.ReflectUtils;
+import soya.framework.util.StreamUtils;
+
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.lang.reflect.Modifier;
+import java.lang.reflect.*;
 import java.net.URI;
 import java.nio.charset.Charset;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
-import java.util.stream.Collectors;
+import java.nio.charset.StandardCharsets;
+import java.util.*;
+import java.util.concurrent.LinkedBlockingDeque;
 
 public abstract class ResourceService {
+
     private static ResourceService INSTANCE;
     protected Map<String, Resource> resourceMap = new HashMap<>();
+    protected Map<String, Class<? extends ResourceProcessor>> fragmentProcessors = new HashMap<>();
 
     protected ResourceService() {
         INSTANCE = this;
@@ -30,6 +34,10 @@ public abstract class ResourceService {
 
     public static String[] supportedSchemas() {
         return getInstance().resourceMap.keySet().toArray(new String[getInstance().resourceMap.size()]);
+    }
+
+    public static String[] supportedFragmentProcessors() {
+        return getInstance().fragmentProcessors.keySet().toArray(new String[getInstance().fragmentProcessors.size()]);
     }
 
     public static InputStream getAsInputStream(URI uri) throws ResourceException {
@@ -60,53 +68,242 @@ public abstract class ResourceService {
     }
 
     public static class DefaultResourceService extends ResourceService {
-        protected DefaultResourceService() {
-            super();
-            findAllClassesUsingClassLoader(ResourceService.class.getPackage().getName()).forEach(e -> {
+        private static final String DEFAULT_PACKAGE = ResourceService.class.getPackage().getName();
+        public static final String[] DEFAULT_PACKAGES = new String[]{DEFAULT_PACKAGE, DEFAULT_PACKAGE + ".resources", DEFAULT_PACKAGE + ".fragments"};
 
-                if (Resource.class.isAssignableFrom(e) && !e.isInterface() && !Modifier.isAbstract(e.getModifiers())) {
-                    try {
-                        Resource resource = (Resource) e.newInstance();
-                        resourceMap.put(resource.schema(), resource);
-                    } catch (InstantiationException | IllegalAccessException ex) {
-                        throw new ResourceException(ex);
+        protected DefaultResourceService() {
+            this(DEFAULT_PACKAGES);
+        }
+
+        public DefaultResourceService(String[] packages) {
+            super();
+            Objects.requireNonNull(packages);
+            Set<Class<?>> set = new HashSet<>();
+            Arrays.stream(packages).forEach(e -> {
+                set.addAll(ReflectUtils.findClassesOfPackage(e));
+            });
+
+            register(set.toArray(new Class<?>[set.size()]));
+
+        }
+
+        public DefaultResourceService(Class<?>[] classes) {
+            super();
+            register(classes);
+        }
+
+        protected void register(Class<?>[] classes) {
+            Objects.requireNonNull(classes);
+            for (Class<?> rt : classes) {
+                Named named = rt.getAnnotation(Named.class);
+                if (named != null && !rt.isInterface() && !Modifier.isAbstract(rt.getModifiers())) {
+                    String name = named.value();
+                    if (Resource.class.isAssignableFrom(rt)) {
+                        try {
+                            if (!resourceMap.containsKey(name)) {
+                                resourceMap.put(name, (Resource) rt.newInstance());
+
+                            } else if (!resourceMap.get(name).getClass().equals(rt)) {
+                                throw new IllegalArgumentException("Resource '" + name + "' already exists.");
+                            }
+                        } catch (InstantiationException | IllegalAccessException e) {
+                            throw new ResourceException(e);
+                        }
+
+                    } else if ((ResourceProcessor.class.isAssignableFrom(rt))) {
+                        if (!fragmentProcessors.containsKey(name)) {
+                            fragmentProcessors.put(name, (Class<? extends ResourceProcessor>) rt);
+
+                        } else if (!fragmentProcessors.get(name).equals(rt)) {
+                            throw new IllegalArgumentException("Fragment processor '" + name + "' already exists.");
+
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    public static class FragmentProcessChain {
+
+        private List<ResourceProcessor> processors = new ArrayList<>();
+
+        public FragmentProcessChain(String fragment) {
+            if (fragment != null) {
+                StringTokenizer tokenizer = new StringTokenizer(fragment, ")");
+                while (tokenizer.hasMoreTokens()) {
+                    String token = tokenizer.nextToken();
+                    if (token.startsWith(".")) {
+                        token = token.substring(1);
+                    }
+
+                    int separator = token.indexOf('(');
+                    if (separator > 0) {
+                        String name = token.substring(0, separator);
+                        String params = token.substring(separator + 1);
+
+                        Class<? extends ResourceProcessor> type = getInstance().fragmentProcessors.get(name);
+                        if (type == null) {
+                            throw new IllegalArgumentException("Cannot find resource processor named as: " + name);
+                        }
+
+                        processors.add(create(type, params));
+
+                    }
+                }
+            }
+        }
+
+        private ResourceProcessor create(Class<? extends ResourceProcessor> type, String param) {
+
+            Constructor constructor = type.getConstructors()[0];
+            Parameter[] parameters = constructor.getParameters();
+            Object[] args = compile(param, parameters);
+
+            try {
+                return (ResourceProcessor) constructor.newInstance(args);
+
+            } catch (InstantiationException | IllegalAccessException | InvocationTargetException e) {
+                throw new IllegalArgumentException(e);
+            }
+        }
+
+        private Object[] compile(String string, Parameter[] parameters) {
+            Object[] args = new Object[parameters.length];
+            if (args.length == 0 && string.length() != 0) {
+                throw new IllegalArgumentException("Processor constructor error: arguments not match.");
+
+            } else if (args.length == 1) {
+                Class<?> type = parameters[0].getType();
+                if (!type.isArray()) {
+                    args[0] = ConvertService.convert(string, parameters[0].getType());
+
+                } else {
+                    String token = string;
+                    if (token.startsWith("[") && token.endsWith("]")) {
+                        token = token.substring(1, token.length() - 1);
+                    }
+                    String[] arr = token.split(",");
+
+                    Object o = Array.newInstance(type.getComponentType(), arr.length);
+                    for (int i = 0; i < arr.length; i++) {
+                        Array.set(o, i, ConvertService.convert(arr[i], type.getComponentType()));
+                    }
+                    args[0] = o;
+                }
+
+            } else {
+                // FIXME:
+                String token = string;
+                List<String> paramValues = new ArrayList<>();
+                if (!token.contains("[")) {
+                    Arrays.stream(token.split(",")).forEach(e -> {
+                        paramValues.add(e);
+                    });
+                } else {
+
+                    // FIXME:
+                    int index = token.indexOf('[');
+                    while (index >= 0) {
+                        int end = token.indexOf(']');
+
+                        String left = token.substring(0, index);
+                        if (left.endsWith(",")) {
+                            left = left.substring(0, left.length() - 1);
+                        }
+
+                        if (!left.isEmpty()) {
+                            Arrays.stream(left.split(",")).forEach(e -> {
+                                paramValues.add(e);
+                            });
+                        }
+
+                        String middle = token.substring(index, end + 1);
+                        paramValues.add(middle);
+
+                        token = token.substring(end + 1);
+                        if (token.startsWith(",")) {
+                            token = token.substring(1);
+                        }
+
+                        index = token.indexOf('[');
                     }
                 }
 
-            });
-        }
+                if(!token.isEmpty()){
+                    Arrays.stream(token.split(",")).forEach(e -> {
+                        paramValues.add(e);
+                    });
+                }
 
-        public DefaultResourceService(Class<? extends Resource>[] resourceTypes) {
-            this();
-            Objects.requireNonNull(resourceTypes);
-            for (Class<? extends Resource> rt : resourceTypes) {
-                try {
-                    Resource resource = (Resource) rt.newInstance();
-                    resourceMap.put(resource.schema(), resource);
-                } catch (InstantiationException | IllegalAccessException ex) {
-                    throw new ResourceException(ex);
+                paramValues.forEach(e -> {
+                    System.out.println("================ " + e);
+                });
+
+
+                for (int i = 0; i < parameters.length; i++) {
+                    Class<?> type = parameters[i].getType();
+                    if (!type.isArray()) {
+                        if (token.startsWith("[")) {
+                            throw new IllegalArgumentException("Arguments parsing error: not expecting an array.");
+                        } else {
+                            int sep = token.indexOf(',');
+                            String value = token.substring(0, sep);
+                            token = token.substring(sep + 1);
+                            args[i] = ConvertService.convert(value, type);
+                        }
+                    } else {
+                        if (!token.startsWith("[")) {
+                            throw new IllegalArgumentException("Arguments parsing error: expecting an array.");
+
+                        } else {
+                            int sep = token.indexOf(']');
+                            String value = token.substring(1, sep);
+                            token = token.substring(sep + 1);
+                            if (token.startsWith(",")) {
+                                token = token.substring(1);
+                            }
+                            String[] arr = value.split(",");
+                            Object o = Array.newInstance(type.getComponentType(), arr.length);
+                            for (int j = 0; j < arr.length; j++) {
+                                Array.set(o, j, ConvertService.convert(arr[j], type.getComponentType()));
+                            }
+                            args[i] = o;
+                        }
+                    }
                 }
             }
+
+            return args;
         }
 
-        protected Set<Class> findAllClassesUsingClassLoader(String packageName) {
-            InputStream stream = ClassLoader.getSystemClassLoader()
-                    .getResourceAsStream(packageName.replaceAll("[.]", "/"));
-            BufferedReader reader = new BufferedReader(new InputStreamReader(stream));
-            return reader.lines()
-                    .filter(line -> line.endsWith(".class"))
-                    .map(line -> getClass(line, packageName))
-                    .collect(Collectors.toSet());
-        }
-
-        private Class getClass(String className, String packageName) {
-            try {
-                return Class.forName(packageName + "."
-                        + className.substring(0, className.lastIndexOf('.')));
-            } catch (ClassNotFoundException e) {
-                // handle the exception
+        public InputStream process(InputStream in) throws IOException {
+            if (processors.isEmpty()) {
+                return in;
             }
-            return null;
+
+            byte[] data = StreamUtils.copyToByteArray(in);
+            Queue<ResourceProcessor> queue = new LinkedBlockingDeque<>(processors);
+            while (!queue.isEmpty()) {
+                data = queue.poll().process(data);
+            }
+
+            return new ByteArrayInputStream(data);
+
+        }
+
+        public String process(String in) {
+            if (processors.isEmpty()) {
+                return in;
+            }
+
+            byte[] data = in.getBytes(StandardCharsets.UTF_8);
+            Queue<ResourceProcessor> queue = new LinkedBlockingDeque<>(processors);
+            while (!queue.isEmpty()) {
+                data = queue.poll().process(data);
+            }
+
+            return new String(data, Charset.defaultCharset());
         }
     }
 }

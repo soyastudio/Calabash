@@ -1,4 +1,10 @@
-package soya.framework.io;
+package soya.framework.io.resources;
+
+import soya.framework.io.Resource;
+import soya.framework.io.ResourceException;
+import soya.framework.io.ResourceService;
+import soya.framework.util.StreamUtils;
+import soya.framework.lang.Named;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -7,13 +13,8 @@ import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 
+@Named("base64")
 public class Base64Resource implements Resource {
-    private static String SCHEMA = "base64";
-
-    @Override
-    public String schema() {
-        return SCHEMA;
-    }
 
     @Override
     public InputStream getAsInputStream(URI uri) throws ResourceException {
@@ -22,7 +23,7 @@ public class Base64Resource implements Resource {
 
         } else {
             URI sub = URI.create(uri.getSchemeSpecificPart());
-            if (sub.getScheme() != null && !sub.getScheme().equalsIgnoreCase(SCHEMA)) {
+            if (sub.getScheme() != null && !sub.getScheme().equalsIgnoreCase("base64")) {
                 InputStream is = ResourceService.getAsInputStream(sub);
                 try {
                     return new ByteArrayInputStream(Base64.getDecoder().decode(StreamUtils.copyToByteArray(is)));

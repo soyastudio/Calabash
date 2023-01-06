@@ -1,4 +1,4 @@
-package soya.framework.io;
+package soya.framework.util;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;

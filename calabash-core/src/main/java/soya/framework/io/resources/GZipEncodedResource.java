@@ -1,4 +1,10 @@
-package soya.framework.io;
+package soya.framework.io.resources;
+
+import soya.framework.io.Resource;
+import soya.framework.io.ResourceException;
+import soya.framework.io.ResourceService;
+import soya.framework.util.StreamUtils;
+import soya.framework.lang.Named;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -8,13 +14,8 @@ import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 import java.util.zip.GZIPInputStream;
 
+@Named("gzip")
 public class GZipEncodedResource implements Resource {
-    private static final String SCHEMA = "gzip";
-
-    @Override
-    public String schema() {
-        return SCHEMA;
-    }
 
     @Override
     public InputStream getAsInputStream(URI uri) throws ResourceException {
@@ -22,7 +23,7 @@ public class GZipEncodedResource implements Resource {
             return unzip(uri.getHost().getBytes(StandardCharsets.UTF_8));
         } else {
             URI sub = URI.create(uri.getSchemeSpecificPart());
-            if(sub.getScheme() != null && !sub.getScheme().equals(SCHEMA)) {
+            if(sub.getScheme() != null && !sub.getScheme().equals("gzip")) {
                 try {
                     return unzip(StreamUtils.copyToByteArray(ResourceService.getAsInputStream(sub)));
                 } catch (IOException e) {
