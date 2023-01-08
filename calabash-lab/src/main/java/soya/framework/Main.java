@@ -17,7 +17,7 @@ public class Main {
 
     public static void main(String[] args) throws FileNotFoundException {
 
-        File xlsx = new File("C:\\Albertsons\\workspace\\doc\\xpath-mappings.xlsx");
+        File xlsx = new File("C:/Albertsons/workspace/doc/xpath-mappings.xlsx");
         File csv = new File("C:\\Albertsons\\workspace\\doc\\data.csv");
 
         /*new XlsxDynaClass("GroceryOrder", xlsx, "Map_OMS to Canonical_CMM",
