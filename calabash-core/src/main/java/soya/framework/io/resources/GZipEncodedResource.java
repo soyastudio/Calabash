@@ -3,8 +3,8 @@ package soya.framework.io.resources;
 import soya.framework.io.Resource;
 import soya.framework.io.ResourceException;
 import soya.framework.io.ResourceService;
-import soya.framework.util.StreamUtils;
 import soya.framework.lang.Named;
+import soya.framework.util.StreamUtils;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;

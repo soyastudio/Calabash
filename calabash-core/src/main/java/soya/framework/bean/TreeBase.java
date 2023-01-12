@@ -112,7 +112,7 @@ public abstract class TreeBase<T> extends AnnotatableFeature implements Tree<T> 
             this.parent = parent;
             this.name = name;
             this.data = data;
-            this.path = parent == null ? "/" + name : parent.getPath() + "/" + name;
+            this.path = parent == null ? name : parent.getPath() + "/" + name;
 
         }
 

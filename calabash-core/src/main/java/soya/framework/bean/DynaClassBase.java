@@ -54,6 +54,14 @@ public abstract class DynaClassBase extends AnnotatableFeature implements DynaCl
         }
 
         @Override
+        public void set(String name, Object value) {
+            if (!dynaClass.contains(name)) {
+                throw new IllegalArgumentException("No such property: " + name);
+            }
+            values.put(name, ConvertService.convert(value, dynaClass.getDynaProperty(name).getType()));
+        }
+
+        @Override
         public Object get(String name) {
             if (!dynaClass.contains(name)) {
                 throw new IllegalArgumentException("No such property: " + name);
@@ -62,11 +70,18 @@ public abstract class DynaClassBase extends AnnotatableFeature implements DynaCl
         }
 
         @Override
-        public void set(String name, Object value) {
+        public String getAsString(String name) {
             if (!dynaClass.contains(name)) {
                 throw new IllegalArgumentException("No such property: " + name);
             }
-            values.put(name, ConvertService.convert(value, dynaClass.getDynaProperty(name).getType()));
+
+            if(!values.containsKey(name)) {
+                return null;
+            }
+
+            Object value = values.get(name);
+            DynaProperty property = dynaClass.getDynaProperty(name);
+            return String.valueOf(value);
         }
     }
 }

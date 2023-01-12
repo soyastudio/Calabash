@@ -1,5 +1,7 @@
 package soya.framework.io;
 
-public interface ResourceProcessor {
+import soya.framework.lang.FunctionProcessor;
+
+public interface ResourceProcessor extends FunctionProcessor<byte[]> {
     byte[] process(byte[] data) throws ResourceException;
 }

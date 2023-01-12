@@ -102,12 +102,12 @@ public class ResultSetDynaClass extends DynaClassBase {
         try {
             final int sqlType = metadata.getColumnType(i);
             switch (sqlType) {
-                case java.sql.Types.DATE:
-                    return new DynaProperty(name, java.sql.Date.class);
-                case java.sql.Types.TIMESTAMP:
-                    return new DynaProperty(name, java.sql.Timestamp.class);
-                case java.sql.Types.TIME:
-                    return new DynaProperty(name, java.sql.Time.class);
+                case Types.DATE:
+                    return new DynaProperty(name, Date.class);
+                case Types.TIMESTAMP:
+                    return new DynaProperty(name, Timestamp.class);
+                case Types.TIME:
+                    return new DynaProperty(name, Time.class);
                 default:
                     className = metadata.getColumnClassName(i);
             }

@@ -2,7 +2,7 @@ package soya.framework.bean;
 
 import java.util.List;
 
-public interface TreeNode<T> {
+public interface TreeNode<T> extends Annotatable {
 
     TreeNode<T> getParent();
 

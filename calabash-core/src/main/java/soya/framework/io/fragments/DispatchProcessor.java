@@ -1,7 +1,7 @@
 package soya.framework.io.fragments;
 
-import soya.framework.io.ResourceProcessor;
 import soya.framework.io.ResourceException;
+import soya.framework.io.ResourceProcessor;
 import soya.framework.lang.Named;
 
 @Named("process")

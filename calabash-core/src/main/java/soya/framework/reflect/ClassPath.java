@@ -1,7 +1,5 @@
 package soya.framework.reflect;
 
-import org.objectweb.asm.AnnotationVisitor;
-import org.objectweb.asm.ClassVisitor;
 
 import java.io.File;
 import java.io.IOException;
@@ -79,17 +77,5 @@ public class ClassPath {
         });
 
         System.out.println("------------ " + (System.currentTimeMillis() - start));
-    }
-
-    public static class MyClass extends ClassVisitor {
-
-        protected MyClass(int api) {
-            super(api);
-        }
-
-        @Override
-        public AnnotationVisitor visitAnnotation(String descriptor, boolean visible) {
-            return super.visitAnnotation(descriptor, visible);
-        }
     }
 }
