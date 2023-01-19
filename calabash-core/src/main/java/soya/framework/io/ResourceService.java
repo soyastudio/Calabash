@@ -1,7 +1,7 @@
 package soya.framework.io;
 
 import soya.framework.annotation.Named;
-import soya.framework.reflect.ReflectUtils;
+import soya.framework.util.ReflectUtils;
 import soya.framework.util.StreamUtils;
 import soya.framework.util.convert.ConvertService;
 

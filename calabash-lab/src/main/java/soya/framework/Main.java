@@ -1,28 +1,17 @@
 package soya.framework;
 
-import com.google.gson.Gson;
-import soya.framework.bean.JsonUtils;
-import soya.framework.csv.CSVDynaClass;
+import soya.framework.annotation.Named;
 import soya.framework.io.ResourceService;
-import soya.framework.poi.XlsxDynaClass;
-import soya.framework.util.RandomUtils;
 
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.lang.reflect.Constructor;
 import java.net.URI;
-import java.net.URLClassLoader;
-import java.text.SimpleDateFormat;
-import java.util.Arrays;
-import java.util.Date;
 import java.util.Spliterators;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.function.Predicate;
 
 public class Main {
 
     public static void main(String[] args) throws Exception {
+        System.out.println(SubClass.class.getAnnotation(Named.class));
 
         Spliterators.emptyDoubleSpliterator();
 
