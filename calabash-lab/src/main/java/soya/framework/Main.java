@@ -5,17 +5,32 @@ import soya.framework.bean.JsonUtils;
 import soya.framework.csv.CSVDynaClass;
 import soya.framework.io.ResourceService;
 import soya.framework.poi.XlsxDynaClass;
+import soya.framework.util.RandomUtils;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.lang.reflect.Constructor;
 import java.net.URI;
 import java.net.URLClassLoader;
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
+import java.util.Date;
+import java.util.Spliterators;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.function.Predicate;
 
 public class Main {
 
-    public static void main(String[] args) throws FileNotFoundException {
+    public static void main(String[] args) throws Exception {
+
+        Spliterators.emptyDoubleSpliterator();
+
+        AtomicBoolean atomicBoolean = new AtomicBoolean();
+
+        System.out.println("================== " + atomicBoolean.get());
+
+        atomicBoolean.set(true);
 
         File xlsx = new File("C:/Albertsons/workspace/doc/xpath-mappings.xlsx");
         File csv = new File("C:\\Albertsons\\workspace\\doc\\data.csv");

@@ -1,6 +1,8 @@
 package soya.framework.io;
 
-import soya.framework.lang.Named;
+
+
+import soya.framework.annotation.Named;
 
 import java.io.InputStream;
 import java.net.URI;

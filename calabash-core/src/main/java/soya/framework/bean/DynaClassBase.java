@@ -1,5 +1,8 @@
 package soya.framework.bean;
 
+
+import soya.framework.util.ConvertUtils;
+
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -58,7 +61,7 @@ public abstract class DynaClassBase extends AnnotatableFeature implements DynaCl
             if (!dynaClass.contains(name)) {
                 throw new IllegalArgumentException("No such property: " + name);
             }
-            values.put(name, ConvertService.convert(value, dynaClass.getDynaProperty(name).getType()));
+            values.put(name, ConvertUtils.convert(value, dynaClass.getDynaProperty(name).getType()));
         }
 
         @Override
