@@ -1,7 +1,7 @@
 package soya.framework.io.fragments;
 
-import soya.framework.io.ResourceFilter;
 import soya.framework.annotation.Named;
+import soya.framework.io.ResourceFilter;
 
 import java.util.Arrays;
 

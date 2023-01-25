@@ -136,6 +136,10 @@ public class AssertUtils {
             return Array.getLength(obj) == 0;
         }
 
+        if(obj instanceof String) {
+            return ((String)obj).isEmpty();
+        }
+
         // check isEmpty method
         try {
             Method method = obj.getClass().getMethod("isEmpty", new Class[0]);

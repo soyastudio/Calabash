@@ -1,11 +1,7 @@
 package soya.framework.util;
 
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Properties;
-import java.util.Set;
+import java.util.*;
 
 public class PropertyPlaceholderHelper {
 
@@ -155,7 +151,7 @@ public class PropertyPlaceholderHelper {
         int index = startIndex + this.placeholderPrefix.length();
         int withinNestedPlaceholder = 0;
         while (index < buf.length()) {
-            if (StringUtils.substringMatch(buf, index, this.placeholderSuffix)) {
+            if (SpStringUtils.substringMatch(buf, index, this.placeholderSuffix)) {
                 if (withinNestedPlaceholder > 0) {
                     withinNestedPlaceholder--;
                     index = index + this.placeholderSuffix.length();
@@ -164,7 +160,7 @@ public class PropertyPlaceholderHelper {
                     return index;
                 }
             }
-            else if (StringUtils.substringMatch(buf, index, this.simplePrefix)) {
+            else if (SpStringUtils.substringMatch(buf, index, this.simplePrefix)) {
                 withinNestedPlaceholder++;
                 index = index + this.simplePrefix.length();
             }

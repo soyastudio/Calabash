@@ -1,8 +1,8 @@
 package soya.framework.io.fragments;
 
+import soya.framework.annotation.Named;
 import soya.framework.io.ResourceException;
 import soya.framework.io.ResourceFilter;
-import soya.framework.annotation.Named;
 
 @Named("process")
 public class DispatchFilter implements ResourceFilter {
