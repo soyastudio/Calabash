@@ -6,6 +6,7 @@ import java.util.Arrays;
 import java.util.Objects;
 
 public class DefaultComponentMetadata implements ComponentMetadata {
+
     private String componentType;
     private String[] annotations;
     private String[] interfaces;
