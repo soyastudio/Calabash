@@ -5,7 +5,7 @@ import java.lang.annotation.*;
 @Target({ElementType.ANNOTATION_TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-public @interface AnnotationProperty {
+public @interface MetaProperty {
     String key();
 
     String value();

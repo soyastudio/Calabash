@@ -4,15 +4,15 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.*;
 
-public final class AnnotationsUtils {
+public final class MetadataUtils {
 
-    private AnnotationsUtils() {
+    private MetadataUtils() {
     }
 
-    public static Properties getAsProperties(Annotations annotations) {
-        Objects.requireNonNull(annotations);
+    public static Properties getAsProperties(Metadata metadata) {
+        Objects.requireNonNull(metadata);
         Properties properties = new Properties();
-        Arrays.stream(annotations.properties()).forEach(p -> {
+        Arrays.stream(metadata.properties()).forEach(p -> {
             String value = p.value().trim();
             if(value.startsWith("${") && value.endsWith("}")) {
                 value = System.getProperty(value.substring(2, value.length() - 1));
@@ -34,13 +34,13 @@ public final class AnnotationsUtils {
 
     }
 
-    public static <T> T parse(Annotations annotations, Class<T> target) {
-        return parse(annotations, null, target);
+    public static <T> T parse(Metadata metadata, Class<T> target) {
+        return parse(metadata, null, target);
     }
 
-    public static <T> T parse(Annotations annotations, String prefix, Class<T> target) {
+    public static <T> T parse(Metadata metadata, String prefix, Class<T> target) {
         Objects.requireNonNull(target);
-        Properties properties = getAsProperties(annotations);
+        Properties properties = getAsProperties(metadata);
         try {
             T obj = target.newInstance();
             Set<String> set = new HashSet<>();
